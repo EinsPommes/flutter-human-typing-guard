@@ -1,5 +1,5 @@
 /// Flutter Human Typing Guard
-/// 
+///
 /// A package that detects human typing patterns to prevent bots using
 /// speed, variability, cadence, and entropy analysis without storing
 /// personal data.

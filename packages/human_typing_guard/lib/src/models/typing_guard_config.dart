@@ -65,13 +65,20 @@ class TypingGuardConfig {
       throw ArgumentError('serverUrl is required when sendToServer is true');
     }
     if (sendToServer && hmacKeyProvider == null) {
-      throw ArgumentError('hmacKeyProvider is required when sendToServer is true');
+      throw ArgumentError(
+        'hmacKeyProvider is required when sendToServer is true',
+      );
     }
-    
+
     // Validate feature weights sum to approximately 1.0
-    final weightSum = featureWeights.values.fold(0.0, (sum, weight) => sum + weight);
+    final weightSum = featureWeights.values.fold(
+      0.0,
+      (sum, weight) => sum + weight,
+    );
     if ((weightSum - 1.0).abs() > 0.01) {
-      throw ArgumentError('Feature weights must sum to approximately 1.0, got $weightSum');
+      throw ArgumentError(
+        'Feature weights must sum to approximately 1.0, got $weightSum',
+      );
     }
   }
 

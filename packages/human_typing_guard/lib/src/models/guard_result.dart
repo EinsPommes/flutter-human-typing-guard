@@ -1,7 +1,4 @@
-enum GuardLabel {
-  likelyHuman,
-  suspicious,
-}
+enum GuardLabel { likelyHuman, suspicious }
 
 class GuardResult {
   final double score; // 0.0 = bot, 1.0 = human
@@ -25,7 +22,9 @@ class GuardResult {
     final now = timestamp ?? DateTime.now().millisecondsSinceEpoch;
     return GuardResult(
       score: score,
-      label: score >= threshold ? GuardLabel.likelyHuman : GuardLabel.suspicious,
+      label: score >= threshold
+          ? GuardLabel.likelyHuman
+          : GuardLabel.suspicious,
       details: details,
       timestamp: now,
     );

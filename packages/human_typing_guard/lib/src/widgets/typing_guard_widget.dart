@@ -9,16 +9,16 @@ import '../core/typing_guard.dart';
 class TypingGuardWidget extends StatefulWidget {
   /// The typing guard instance to use
   final TypingGuard guard;
-  
+
   /// Child widget (typically a TextField or TextFormField)
   final Widget child;
-  
+
   /// Callback for analysis results
   final void Function(GuardResult result)? onResult;
-  
+
   /// Whether to show visual feedback (score indicator)
   final bool showFeedback;
-  
+
   /// Custom feedback widget builder
   final Widget Function(GuardResult result)? feedbackBuilder;
 
@@ -62,10 +62,9 @@ class _TypingGuardWidgetState extends State<TypingGuardWidget> {
       children: [
         // Main input widget
         _buildInputWidget(),
-        
+
         // Optional feedback
-        if (widget.showFeedback && _lastResult != null)
-          _buildFeedback(),
+        if (widget.showFeedback && _lastResult != null) _buildFeedback(),
       ],
     );
   }
@@ -81,7 +80,7 @@ class _TypingGuardWidgetState extends State<TypingGuardWidget> {
     if (widget.feedbackBuilder != null) {
       return widget.feedbackBuilder!(_lastResult!);
     }
-    
+
     return _DefaultFeedbackWidget(result: _lastResult!);
   }
 }
@@ -101,7 +100,9 @@ class _TypingGuardInheritedWidget extends InheritedWidget {
   }
 
   static TypingGuard? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<_TypingGuardInheritedWidget>()?.guard;
+    return context
+        .dependOnInheritedWidgetOfExactType<_TypingGuardInheritedWidget>()
+        ?.guard;
   }
 }
 
@@ -124,11 +125,7 @@ class _DefaultFeedbackWidget extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            _getStatusIcon(),
-            size: 16,
-            color: _getStatusColor(),
-          ),
+          Icon(_getStatusIcon(), size: 16, color: _getStatusColor()),
           const SizedBox(width: 8),
           Text(
             'Score: ${(result.score * 100).toInt()}%',
@@ -180,22 +177,26 @@ mixin TypingGuardMixin on TextEditingController {
       final addedText = currentText.substring(previousLength);
       if (addedText.length == 1) {
         // Single character typed
-        _guard!.addEvent(TypingEvent.character(
-          timestamp: DateTime.now().millisecondsSinceEpoch,
-          character: addedText,
-        ));
+        _guard!.addEvent(
+          TypingEvent.character(
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+            character: addedText,
+          ),
+        );
       } else {
         // Multiple characters (likely paste)
-        _guard!.addEvent(TypingEvent.paste(
-          timestamp: DateTime.now().millisecondsSinceEpoch,
-          pastedText: addedText,
-        ));
+        _guard!.addEvent(
+          TypingEvent.paste(
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+            pastedText: addedText,
+          ),
+        );
       }
     } else if (currentLength < previousLength) {
       // Text was removed (backspace)
-      _guard!.addEvent(TypingEvent.backspace(
-        timestamp: DateTime.now().millisecondsSinceEpoch,
-      ));
+      _guard!.addEvent(
+        TypingEvent.backspace(timestamp: DateTime.now().millisecondsSinceEpoch),
+      );
     }
 
     _previousText = currentText;

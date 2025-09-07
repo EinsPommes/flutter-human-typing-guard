@@ -15,39 +15,40 @@ class TypingGuardClient {
   final String _sessionId;
   final Map<String, String> _defaultHeaders;
 
-  TypingGuardClient({
-    required this.config,
-    http.Client? httpClient,
-  }) : _httpClient = httpClient ?? http.Client(),
-       _sessionId = const Uuid().v4(),
-       _defaultHeaders = {
-         'Content-Type': 'application/json',
-         'User-Agent': 'human_typing_guard/1.0.0',
-       };
+  TypingGuardClient({required this.config, http.Client? httpClient})
+    : _httpClient = httpClient ?? http.Client(),
+      _sessionId = const Uuid().v4(),
+      _defaultHeaders = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'human_typing_guard/1.0.0',
+      };
 
   /// Send typing features to server for scoring
   Future<GuardResult?> scoreFeatures(TypingFeatures features) async {
-    if (config.privacyMode || !config.sendToServer || config.serverUrl == null) {
+    if (config.privacyMode ||
+        !config.sendToServer ||
+        config.serverUrl == null) {
       return null;
     }
 
     try {
       final payload = _createPayload(features);
       final signature = await _createSignature(payload);
-      
-      final response = await _httpClient.post(
-        config.serverUrl!,
-        headers: {
-          ..._defaultHeaders,
-          'X-Signature': signature,
-        },
-        body: jsonEncode(payload),
-      ).timeout(const Duration(seconds: 5));
+
+      final response = await _httpClient
+          .post(
+            config.serverUrl!,
+            headers: {..._defaultHeaders, 'X-Signature': signature},
+            body: jsonEncode(payload),
+          )
+          .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         return _parseResponse(response.body);
       } else {
-        throw Exception('Server returned status ${response.statusCode}: ${response.body}');
+        throw Exception(
+          'Server returned status ${response.statusCode}: ${response.body}',
+        );
       }
     } catch (e) {
       // Log error but don't throw - local analysis should still work
@@ -81,24 +82,26 @@ class TypingGuardClient {
     final body = jsonEncode(payload);
     final keyBytes = utf8.encode(key);
     final bodyBytes = utf8.encode(body);
-    
+
     final hmac = Hmac(sha256, keyBytes);
     final digest = hmac.convert(bodyBytes);
-    
+
     return 'sha256=${digest.toString()}';
   }
 
   /// Parse server response
   GuardResult _parseResponse(String responseBody) {
     final data = jsonDecode(responseBody) as Map<String, dynamic>;
-    
+
     final score = (data['score'] as num).toDouble();
     final label = data['label'] as String;
     final hints = List<String>.from(data['hints'] ?? []);
-    
+
     return GuardResult(
       score: score,
-      label: label == 'likely_human' ? GuardLabel.likelyHuman : GuardLabel.suspicious,
+      label: label == 'likely_human'
+          ? GuardLabel.likelyHuman
+          : GuardLabel.suspicious,
       details: {
         'server_score': score,
         'hints': hints,
@@ -128,10 +131,9 @@ class TypingGuardClient {
 
     try {
       final healthUrl = config.serverUrl!.resolve('/healthz');
-      final response = await _httpClient.get(
-        healthUrl,
-        headers: _defaultHeaders,
-      ).timeout(const Duration(seconds: 3));
+      final response = await _httpClient
+          .get(healthUrl, headers: _defaultHeaders)
+          .timeout(const Duration(seconds: 3));
 
       return response.statusCode == 200;
     } catch (e) {
@@ -147,10 +149,9 @@ class TypingGuardClient {
 
     try {
       final configUrl = config.serverUrl!.resolve('/config');
-      final response = await _httpClient.get(
-        configUrl,
-        headers: _defaultHeaders,
-      ).timeout(const Duration(seconds: 3));
+      final response = await _httpClient
+          .get(configUrl, headers: _defaultHeaders)
+          .timeout(const Duration(seconds: 3));
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body) as Map<String, dynamic>;
@@ -158,7 +159,7 @@ class TypingGuardClient {
     } catch (e) {
       // Ignore errors
     }
-    
+
     return null;
   }
 

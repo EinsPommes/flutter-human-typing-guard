@@ -11,7 +11,8 @@ class TypingGuard {
   final TypingGuardConfig config;
   final TypingAnalyzer _analyzer;
   final TypingGuardClient? _client;
-  final StreamController<GuardResult> _resultController = StreamController<GuardResult>.broadcast();
+  final StreamController<GuardResult> _resultController =
+      StreamController<GuardResult>.broadcast();
 
   /// Stream of combined analysis results (local + server)
   Stream<GuardResult> get results => _resultController.stream;
@@ -20,10 +21,10 @@ class TypingGuard {
   Stream<GuardResult> get localResults => _analyzer.results;
 
   TypingGuard({required this.config})
-      : _analyzer = TypingAnalyzer(config: config),
-        _client = config.sendToServer && !config.privacyMode
-            ? TypingGuardClient(config: config)
-            : null {
+    : _analyzer = TypingAnalyzer(config: config),
+      _client = config.sendToServer && !config.privacyMode
+          ? TypingGuardClient(config: config)
+          : null {
     _setupResultStream();
   }
 
@@ -32,7 +33,7 @@ class TypingGuard {
     _analyzer.results.listen((localResult) {
       // Always emit local result
       _resultController.add(localResult);
-      
+
       // Optionally send to server for additional scoring
       if (_client != null && config.sendToServer) {
         _sendToServer(localResult);
@@ -54,9 +55,11 @@ class TypingGuard {
       final featuresMap = localResult.details;
       if (featuresMap.isEmpty) return;
 
-      final features = TypingFeatures.fromMap(Map<String, dynamic>.from(featuresMap));
+      final features = TypingFeatures.fromMap(
+        Map<String, dynamic>.from(featuresMap),
+      );
       final serverResult = await _client!.scoreFeatures(features);
-      
+
       if (serverResult != null) {
         // Combine local and server results
         final combinedResult = _combineResults(localResult, serverResult);
@@ -72,10 +75,10 @@ class TypingGuard {
   GuardResult _combineResults(GuardResult local, GuardResult server) {
     // Weighted combination: 70% server, 30% local
     final combinedScore = (server.score * 0.7) + (local.score * 0.3);
-    
+
     // Use server label if available, otherwise local
     final label = server.label;
-    
+
     return GuardResult(
       score: combinedScore,
       label: label,
