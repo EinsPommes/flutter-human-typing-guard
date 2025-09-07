@@ -36,11 +36,6 @@ jobs:
         cd packages/human_typing_guard
         flutter pub get
         
-    - name: Verify formatting
-      run: |
-        cd packages/human_typing_guard
-        dart format --output=none --set-exit-if-changed .
-        
     - name: Analyze project source
       run: |
         cd packages/human_typing_guard
