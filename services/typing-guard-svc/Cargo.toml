@@ -1,0 +1,65 @@
+[package]
+name = "typing-guard-svc"
+version = "1.0.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "Rust microservice for human typing pattern analysis and bot detection"
+license = "MIT"
+repository = "https://github.com/your-username/flutter-human-typing-guard"
+keywords = ["anti-bot", "heuristics", "axum", "typing", "security"]
+categories = ["web-programming", "authentication"]
+
+[dependencies]
+# Web framework
+axum = { version = "0.7", features = ["macros", "tracing"] }
+tokio = { version = "1.0", features = ["full"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# HTTP client and server
+hyper = { version = "1.0", features = ["full"] }
+http = "1.0"
+
+# Cryptography
+hmac = "0.12"
+sha2 = "0.10"
+hex = "0.4"
+
+# Configuration
+config = "0.14"
+toml = "0.8"
+
+# Logging and tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Rate limiting
+governor = "0.6"
+
+# UUID
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Metrics (optional)
+prometheus = { version = "0.13", optional = true }
+
+[features]
+default = []
+metrics = ["prometheus"]
+
+[[bin]]
+name = "typing-guard-svc"
+path = "src/main.rs"
+
+[dev-dependencies]
+tokio-test = "0.4"

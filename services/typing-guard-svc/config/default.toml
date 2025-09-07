@@ -1,0 +1,22 @@
+[server]
+host = "0.0.0.0"
+port = 8080
+cors_origins = ["*"]
+
+[security]
+hmac_key = "default-key-change-in-production"
+require_hmac = false
+
+[scoring]
+suspicious_threshold = 0.4
+
+[scoring.feature_weights]
+speed = 0.3
+variability = 0.25
+entropy = 0.2
+backspace = 0.15
+jitter = 0.1
+
+[rate_limit]
+requests_per_minute = 60
+burst_size = 10
