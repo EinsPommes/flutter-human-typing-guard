@@ -145,7 +145,7 @@ jobs:
         fi
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: typing-guard-svc-${{ matrix.target }}
         path: services/typing-guard-svc/target/${{ matrix.target }}/release/typing-guard-svc-*.tar.gz
@@ -168,7 +168,7 @@ jobs:
         fi
         
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       
     - name: Create release notes
       id: release_notes

@@ -155,7 +155,7 @@ jobs:
         cargo build --release --target ${{ matrix.target }}
         
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: typing-guard-svc-${{ matrix.target }}
         path: services/typing-guard-svc/target/${{ matrix.target }}/release/typing-guard-svc
@@ -190,7 +190,7 @@ jobs:
         cargo tarpaulin --out Html --output-dir coverage
         
     - name: Upload coverage reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: services/typing-guard-svc/coverage/
@@ -221,7 +221,7 @@ jobs:
         cargo bench --verbose
         
     - name: Upload benchmark results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: benchmark-results
         path: services/typing-guard-svc/target/criterion/
